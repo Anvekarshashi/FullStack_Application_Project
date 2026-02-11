@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: bank
+  labels:
+    app: vinay
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vinay
+  template:
+    metadata:
+      labels:
+        app: vinay
+    spec:
+      containers:
+      - name: vinay
+        image: anvekarshashi/backend:latest
+        ports:
+        - containerPort: 5000

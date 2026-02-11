@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  namespace: bank
+  labels:
+    app: senthur
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: senthur
+  template:
+    metadata:
+      labels:
+        app: senthur
+    spec:
+      containers:
+      - name: senthur
+        image: anvekarshashi/frontend:latest
+        ports:
+        - containerPort: 5173
