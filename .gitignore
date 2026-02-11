@@ -1,0 +1,8 @@
+-------------------------------------------- backend .env 
+DATABASE_URL=postgresql://appuser:admin@172.17.0.1:5432/dbname
+PORT=5000
+JWT_SECRET=yourGeneratedSecretHere
+
+-------------------------------------------- frontend.env
+VITE_API_URL=http://localhost:5000/api
+~
