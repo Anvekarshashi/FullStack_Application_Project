@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+
+    environment {
+        DATABASE_URL = credentials('DATABASE_URL')
+        JWT_SECRET   = credentials('JWT_SECRET')
+        PORT         = '5000'
+    }
+
+    stages {
+
+        stage("Code") {
+            steps {
+               script{
+                clone: ("https://github.com/Anvekarshashi/FullStack_Application_Project.git.", branch: "main")
+            }
+        }
+
+        stage("Build Backend Image") {
+            steps {
+               script{
+               docker_backend("backend","latest","anvekarshashi")
+               }
+            }
+        }
+          stage("Build Fontend Image") {
+            steps {
+                script{
+               docker_frontend("frontend","latest","anvekarshashi")
+              }
+            }
+        }
+
+        stage("DockerHub Login") {
+            steps {
+                echo "Logging into DockerHub..."
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerHubCreds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+                echo "Logged into DockerHub."
+            }
+        }
+
+        stage("Push Images") {
+            steps {
+                echo "Pushing Docker images to DockerHub..."
+                sh "docker push $docker_image"
+                echo "Docker images pushed."
+            }
+        }
+
+        stage("Deploying Backend") {
+            steps {
+               script{
+               deploy_backend("backend", "anvekarshashi/backend")
+              }
+               
+            }
+        }
+
+          stage("Deploying Frontend") {
+            steps {
+               script{
+               deploy_frontend("backend", "anvekarshashi/backend")
+              
+            }
+        }
+    }
+}
